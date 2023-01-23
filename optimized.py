@@ -4,11 +4,15 @@ from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.colors import LinearSegmentedColormap
 N = 100       # Grid will be N x N
-SIM_T = 0.7  # Similarity threshold (that is 1-τ)
+SIM_T = 0.4 # Similarity threshold (that is 1-τ)
 EMPTY = 0.15  # Fraction of vacant properties
 B_to_R = 1   # Ratio of blue to red people
+iteration=1000
 colors=[(1,1,1),(0,0,1),(1,0,0)]
 cmap_1=LinearSegmentedColormap.from_list("my_list",colors,N=3)
+np.random.seed(42) #seed should be commented out to ensure different result on each iteration
+#seed will make program have reproducable results
+
 def rand_init(N, B_to_R, EMPTY):
     """ Random system initialisation.
     BLUE  =  0
@@ -25,10 +29,10 @@ def rand_init(N, B_to_R, EMPTY):
     M[:reds] = 1
     M[-vacant:] = -1
     np.random.shuffle(M)
-    return M.reshape(N,N)
+    return M.reshape(N,N),population,blues,reds
 
 
-def evolve(M, boundary='wrap',radius=2):
+def evolve(M, boundary='wrap',radius=1):
     """
     Args:
         M (numpy.array): the matrix to be evolved
@@ -53,12 +57,16 @@ def evolve(M, boundary='wrap',radius=2):
 
     kws = dict(mode='same', boundary=boundary)
     #https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.convolve2d.html
-    b_neighs = convolve2d(M == 0, KERNEL, **kws)
-    r_neighs = convolve2d(M == 1, KERNEL, **kws)
-    neighs   = convolve2d(M != -1,  KERNEL, **kws)
+    
+    b_neighs = convolve2d(M == 0, KERNEL, **kws) #number of neightbours that are blue
+    r_neighs = convolve2d(M == 1, KERNEL, **kws) #number of neightbours that are red
+    neighs   = convolve2d(M != -1,  KERNEL, **kws) #total number of neightbours (all exept vacant)
 
     b_dissatified = (b_neighs / neighs < SIM_T) & (M == 0)
     r_dissatified = (r_neighs / neighs < SIM_T) & (M == 1)
+
+    b_segregated = ((b_neighs / neighs == 1)& (M == 0)).sum()
+    r_segregated = ((r_neighs / neighs == 1) & (M == 1)).sum()
     # | is iqual to logic operator or
     #dissatisfied agents vacate their position
     M[r_dissatified | b_dissatified] = - 1
@@ -85,8 +93,11 @@ def evolve(M, boundary='wrap',radius=2):
     else:
         unsatisfaction_r=n_r_dissatified/(M==1).sum()
     kill_signal=0
-    return unsatisfaction_b,unsatisfaction_r,kill_signal
-board=rand_init(N, B_to_R, EMPTY)
+    return unsatisfaction_b,unsatisfaction_r,kill_signal,b_segregated,r_segregated
+
+#################################################################################################
+
+board,population,blues,reds=rand_init(N, B_to_R, EMPTY)
 
 plt.matshow(board,cmap=cmap_1)
 plt.title("Begining")
@@ -97,21 +108,36 @@ plt.close()
 matrices=[]
 dissastified_b=[]
 dissastified_r=[]
+segregated_b=[]
+segregated_r=[]
 
-for i in range(50):
-    per_b_d,per_r_d,kill_signal=evolve(board)
+for i in range(iteration):
+    per_b_d,per_r_d,kill_signal,b_segregated,r_segregated=evolve(board)
+
     dissastified_b.append(per_b_d)
     dissastified_r.append(per_r_d)
+
+    segregated_b.append(b_segregated/blues)
+    segregated_r.append(r_segregated/reds)
     matrices.append(board.copy())
 plt.matshow(board,cmap=cmap_1)
 plt.title("Finish")
 plt.show()
 plt.close()
-
-plt.plot(range(50),dissastified_b,label="dissastified_b",color="blue")
-plt.plot(range(50),dissastified_r,label="dissastified_r",color="red")
+plt.title("Dissatisfaction per iteration")
+plt.plot(range(iteration),dissastified_b,label="dissastified_b",color="blue")
+plt.plot(range(iteration),dissastified_r,label="dissastified_r",color="red")
 plt.xlabel("Iteration")
 plt.ylabel("Dissastisfaction")
+plt.legend()
+plt.show()
+plt.close()
+
+plt.title("Similarity threshold wanted: {}".format(SIM_T))
+plt.plot(range(iteration),segregated_b,label="segregated_b",color="blue")
+plt.plot(range(iteration),segregated_r,label="segregated_r",color="red")
+plt.xlabel("Iteration")
+plt.ylabel("segregated")
 plt.legend()
 plt.show()
 plt.close()
@@ -129,4 +155,4 @@ ani1 = FuncAnimation(fig, update_frames, frames=len(matrices), blit=True)
 
 #saves animation
 from IPython.display import HTML
-HTML(ani1.to_jshtml())
+#HTML(ani1.to_jshtml())

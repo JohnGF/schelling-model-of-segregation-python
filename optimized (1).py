@@ -3,12 +3,15 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 import warnings#delete after
-N = 100      # Grid will be N x N
-SIM_T = 0.7  # Similarity threshold (that is 1-τ) aka not tolerant
+N = 100     # Grid will be N x N
+SIM_T = 0.50  # Similarity threshold (that is 1-τ) aka not tolerant
 EMPTY = 0.1  # Fraction of vacant properties
 B_to_R = 1   # Ratio of blue to red people
 N_agents=3
 cycles=100
+np.random.seed(42) #seed
+cmap_set="tab20c"
+color_l= ['#fdae6b',"#9e9ac8",'#d9d9d9']
 def rand_init(N, B_to_R, EMPTY):
     """ Random system initialisation.
     BLUE  =  0
@@ -24,6 +27,7 @@ def rand_init(N, B_to_R, EMPTY):
     M = np.zeros(N*N, dtype=np.int8)
     M[:reds] = 1
     M[-vacant:] = -1
+    
     np.random.shuffle(M)
     return M.reshape(N,N)
 
@@ -101,10 +105,15 @@ def evolve_m_agent(M, boundary='wrap',n_agents=N_agents,balance="majority"):
     #https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.convolve2d.html
     neighs   = convolve2d(M != -1,  KERNEL, **kws)
     
+    #for graphs
+    dissatified_agent=[]
+    segregated_agent=[]
 
     for i in range(n_agents):
 
         agents_n_l.append(convolve2d(M == i, KERNEL, **kws))
+        dissatified_agent.append((agents_n_l[i] / neighs < SIM_T) & (M == i))
+        segregated_agent.append(((agents_n_l[i] / neighs == 1) & (M == i)).sum())
 
         if balance=="majority":
             if i==0:
@@ -162,9 +171,10 @@ def evolve_m_agent(M, boundary='wrap',n_agents=N_agents,balance="majority"):
     kill_signal=0
     """
     #return
-    return agents_n_l,neighs,filling,agents_d_l,array_map_holder
+    return agents_n_l,neighs,filling,agents_d_l,array_map_holder,dissatified_agent,segregated_agent
 
 def n_agents(N:int,agents_n:int,Empty,balance="faire"):
+    "init for multiple agents"
     vacant = int(N * N * Empty)
     population = N * N - vacant
     
@@ -230,18 +240,21 @@ def k_evolve(M, boundary='wrap'):
 #board=rand_init(N, B_to_R, EMPTY)
 board=n_agents(N,N_agents,EMPTY)
 
-plt.matshow(board,cmap='Set1')
+plt.matshow(board,cmap=cmap_set)
 plt.title("Begining")
 plt.show()
 plt.close()
 #list matrix to use in animation
 matrices=[]
-happines=[]
+unhappines=[]
+dissatified=[]
+segregated=[]
 for i in range(cycles):
-    agents_n_l,neight,filling,agents_d_l,array_map_holder=evolve_m_agent(board)
+    agents_n_l,neight,filling,agents_d_l,array_map_holder,dissatified_agent,segregated_agent=evolve_m_agent(board)
     matrices.append(board.copy())
-    happines.append(agents_d_l)
-plt.matshow(board,cmap='Set1')
+    unhappines.append(agents_d_l)
+    dissatified.append(dissatified_agent),segregated.append(segregated_agent)
+plt.matshow(board,cmap=cmap_set)
 plt.title("Finish")
 plt.show()
 plt.close()
@@ -253,16 +266,27 @@ def update_frames(frame):
    return animation_image,
 
 fig, ax = plt.subplots(figsize=(8,8))
-animation_image = ax.matshow(matrices[0],cmap='Set1')
+animation_image = ax.matshow(matrices[0],cmap=cmap_set)
 #makes bar on animation
 fig.colorbar(animation_image,orientation='horizontal')
 ani1 = FuncAnimation(fig, update_frames, frames=len(matrices), blit=True)
 plt.show()
 plt.close(fig)
 from IPython.display import HTML
-HTML(ani1.to_jshtml())
-
+#HTML(ani1.to_jshtml())
+transpose_list=list(zip(*unhappines))
 for j in range(N_agents):
-    plt.plot( [i[j].sum() for i in happines] )
+    plt.plot(range(cycles),[transpose_list[j][i].sum() for i in range(cycles)],label="Unhappiness %i"%j ,color=color_l[j] )
+plt.title("Unhappiness")
+plt.legend()
+plt.show()
+plt.close()
+#Made redunctant plt.plot( [i[j].sum() for i in dissatified])
+
+transpose_list=list(zip(*segregated))
+for j in range(N_agents):
+        plt.plot(range(cycles),transpose_list[j],label="segregated %i"%j, color=color_l[j] )
+plt.title("Segregation")
+plt.legend()
 plt.show()
 plt.close()

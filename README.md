@@ -11,4 +11,4 @@ Some examples of optimize.py:
 
 </picture>
 
-![Beggining for Threshold of 0.65](/images/beggining_65.png) ![Result for Threshold of 0.65](/images/finish_65.png)
+"![Beggining for Threshold of 0.65](/images/beggining_65.png) ![Result for Threshold of 0.65](/images/finish_65.png)"

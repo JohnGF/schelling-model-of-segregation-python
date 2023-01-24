@@ -11,10 +11,21 @@ Some examples of optimize.py:
   <img alt="Beggining for Threshold of 0.65" src="/images/beggining_65.png"">
 </picture>
 
-
 <picture>
   <source   alt="Result for Threshold of 0.65" media="(prefers-color-scheme: light)" srcset="/images/finish_65.png">
   <source   alt="Result for Threshold of 0.65" media="(prefers-color-scheme: dark)" srcset="/images/finish_65_b.png">
 <img alt="Result for Threshold of 0.65" src="/images/finish_65.png"">
 </picture>
+<p>
 
+<picture>
+  <source   alt="Dissatisfaction for Threshold of 0.65" media="(prefers-color-scheme: light)" srcset="/images/dissats_65.png">
+  <source   alt="Dissatisfaction for Threshold of 0.65" media="(prefers-color-scheme: dark)" srcset="/images/dissats_65_b.png">
+  <img alt="Dissatisfaction for Threshold of 0.65" src="/images/dissats_65.png"">
+</picture>
+
+<picture>
+  <source   alt="Segregation for Threshold of 0.65" media="(prefers-color-scheme: light)" srcset="/images/segregation_65.png">
+  <source   alt="Segregation for Threshold of 0.65" media="(prefers-color-scheme: dark)" srcset="/images/segregation_65_b.png">
+<img alt="Segregation for Threshold of 0.65" src="/images/segregation_65.png"">
+</picture>

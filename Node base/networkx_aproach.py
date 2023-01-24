@@ -15,6 +15,8 @@ pos = dict( (n,n) for n in G.nodes() )
 
 # for proper label assignment of nodes in grid
 labels = dict( ((i,j),i*10+j) for i,j in G.nodes() )
+#similarity threshold base of number of neighbours
+SimilarityT=4 #4/8
 
 # i here represents columns
 # j  here represents rows
@@ -69,10 +71,10 @@ def get_neigh_node_external(u,v):
 							
 
 
-def get_unsatisfied_nodes(G, boundary_nodes, internal_nodes):
+def get_unsatisfied_nodes(G, boundary_nodes, internal_nodes,Threshold):
 	
 	unsatisfied_nodes = []
-	threshold = 3
+	threshold = Threshold # similarity threshold in number of neighbours
 	
 	for u,v in G.nodes():
 		type_of_node = G.nodes[u,v]['type']
@@ -164,7 +166,7 @@ display_graph(G)
 
 boundary_nodes = get_boundary_nodes(G) 
 internal_nodes = list(set(G.nodes())-set(boundary_nodes))
-unsatisfied_nodes = get_unsatisfied_nodes(G, boundary_nodes, internal_nodes)
+unsatisfied_nodes = get_unsatisfied_nodes(G, boundary_nodes, internal_nodes,SimilarityT)
 
 
 
@@ -173,7 +175,7 @@ unsatisfied_nodes = get_unsatisfied_nodes(G, boundary_nodes, internal_nodes)
 
 # Iteration limited because for higher threshold values and empty cell being present the loop might never reach an end
 for i in range(10000):
-	unsatisfied_nodes = get_unsatisfied_nodes(G, boundary_nodes, internal_nodes)
+	unsatisfied_nodes = get_unsatisfied_nodes(G, boundary_nodes, internal_nodes,SimilarityT)
 #print unsatisfied_nodes
 	make_node_satisfied(unsatisfied_nodes, empty_cell_list)
 	
@@ -184,3 +186,6 @@ for i in range(10000):
 #make_node_satisfied(unsatisfied_nodes, empty_cell_list)
 	
 display_graph(G)	
+
+
+

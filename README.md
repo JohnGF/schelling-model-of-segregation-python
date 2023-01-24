@@ -4,4 +4,6 @@ In this project ***optimize.py / optimize.py(1)*** are the code that is ***run**
 But besides that aproach I have other implementations such as the node aproach using networkx that arrive to a similar results (tho less scalable)
 
 Some examples of optimize.py:
-![This is an image](/images/segregation_65.png)
+
+
+![Beggining for Threshold of 0.65](/images/beggining_65.png) ![Result for Threshold of 0.65](/images/finish_65.png)

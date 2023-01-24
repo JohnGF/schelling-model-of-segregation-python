@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.colors import LinearSegmentedColormap
 N = 100       # Grid will be N x N
-SIM_T = 0.4 # Similarity threshold (that is 1-τ)
+SIM_T = 0.65 # Similarity threshold (that is 1-τ)
 EMPTY = 0.15  # Fraction of vacant properties
 B_to_R = 1   # Ratio of blue to red people
 iteration=1000
@@ -12,7 +12,14 @@ colors=[(1,1,1),(0,0,1),(1,0,0)]
 cmap_1=LinearSegmentedColormap.from_list("my_list",colors,N=3)
 np.random.seed(42) #seed should be commented out to ensure different result on each iteration
 #seed will make program have reproducable results
-
+black_mode=True
+if (black_mode==True):
+    params = {"ytick.color" : "w",
+            "xtick.color" : "w",
+            "axes.labelcolor" : "w",
+            "axes.edgecolor" : "w"}
+    plt.rcParams.update(params)
+    color_title="w"
 def rand_init(N, B_to_R, EMPTY):
     """ Random system initialisation.
     BLUE  =  0
@@ -100,7 +107,7 @@ def evolve(M, boundary='wrap',radius=1):
 board,population,blues,reds=rand_init(N, B_to_R, EMPTY)
 
 plt.matshow(board,cmap=cmap_1)
-plt.title("Begining")
+plt.title("Begining", color=color_title)
 plt.show()
 plt.close()
 
@@ -121,10 +128,10 @@ for i in range(iteration):
     segregated_r.append(r_segregated/reds)
     matrices.append(board.copy())
 plt.matshow(board,cmap=cmap_1)
-plt.title("Finish")
+plt.title("Finish", color=color_title)
 plt.show()
 plt.close()
-plt.title("Dissatisfaction per iteration")
+plt.title("Dissatisfaction per iteration",color=color_title)
 plt.plot(range(iteration),dissastified_b,label="dissastified_b",color="blue")
 plt.plot(range(iteration),dissastified_r,label="dissastified_r",color="red")
 plt.xlabel("Iteration")
@@ -133,7 +140,7 @@ plt.legend()
 plt.show()
 plt.close()
 
-plt.title("Similarity threshold wanted: {}".format(SIM_T))
+plt.title("Similarity threshold wanted: {}".format(SIM_T),color=color_title)
 plt.plot(range(iteration),segregated_b,label="segregated_b",color="blue")
 plt.plot(range(iteration),segregated_r,label="segregated_r",color="red")
 plt.xlabel("Iteration")

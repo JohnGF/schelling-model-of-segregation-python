@@ -8,7 +8,7 @@ Some examples of optimize.py:
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="/images/beggining_65.png">
   <source media="(prefers-color-scheme: dark)" srcset="/images/finish_65.png">
-
+  <img alt="Shows an illustrated sun in light color mode and a moon with stars in dark color mode." src="/images/finish_65.png">
 </picture>
 
-"![Beggining for Threshold of 0.65](/images/beggining_65.png) ![Result for Threshold of 0.65](/images/finish_65.png)"
+![Beggining for Threshold of 0.65](/images/beggining_65.png) ![Result for Threshold of 0.65](/images/finish_65.png)

@@ -104,62 +104,63 @@ def evolve(M, boundary='wrap',radius=1):
 
 #################################################################################################
 
-board,population,blues,reds=rand_init(N, B_to_R, EMPTY)
+if __name__ == '__main__':
+    board,population,blues,reds=rand_init(N, B_to_R, EMPTY)
 
-plt.matshow(board,cmap=cmap_1)
-plt.title("Begining", color=color_title)
-plt.show()
-plt.close()
+    plt.matshow(board,cmap=cmap_1)
+    plt.title("Begining", color=color_title)
+    plt.show()
+    plt.close()
 
-#list matrix to use in animation
-matrices=[]
-dissastified_b=[]
-dissastified_r=[]
-segregated_b=[]
-segregated_r=[]
+    #list matrix to use in animation
+    matrices=[]
+    dissastified_b=[]
+    dissastified_r=[]
+    segregated_b=[]
+    segregated_r=[]
 
-for i in range(iteration):
-    per_b_d,per_r_d,kill_signal,b_segregated,r_segregated=evolve(board)
+    for i in range(iteration):
+        per_b_d,per_r_d,kill_signal,b_segregated,r_segregated=evolve(board)
 
-    dissastified_b.append(per_b_d)
-    dissastified_r.append(per_r_d)
+        dissastified_b.append(per_b_d)
+        dissastified_r.append(per_r_d)
 
-    segregated_b.append(b_segregated/blues)
-    segregated_r.append(r_segregated/reds)
-    matrices.append(board.copy())
-plt.matshow(board,cmap=cmap_1)
-plt.title("Finish", color=color_title)
-plt.show()
-plt.close()
-plt.title("Dissatisfaction per iteration",color=color_title)
-plt.plot(range(iteration),dissastified_b,label="dissastified_b",color="blue")
-plt.plot(range(iteration),dissastified_r,label="dissastified_r",color="red")
-plt.xlabel("Iteration")
-plt.ylabel("Dissastisfaction")
-plt.legend()
-plt.show()
-plt.close()
+        segregated_b.append(b_segregated/blues)
+        segregated_r.append(r_segregated/reds)
+        matrices.append(board.copy())
+    plt.matshow(board,cmap=cmap_1)
+    plt.title("Finish", color=color_title)
+    plt.show()
+    plt.close()
+    plt.title("Dissatisfaction per iteration",color=color_title)
+    plt.plot(range(iteration),dissastified_b,label="dissastified_b",color="blue")
+    plt.plot(range(iteration),dissastified_r,label="dissastified_r",color="red")
+    plt.xlabel("Iteration")
+    plt.ylabel("Dissastisfaction")
+    plt.legend()
+    plt.show()
+    plt.close()
 
-plt.title("Similarity threshold wanted: {}".format(SIM_T),color=color_title)
-plt.plot(range(iteration),segregated_b,label="segregated_b",color="blue")
-plt.plot(range(iteration),segregated_r,label="segregated_r",color="red")
-plt.xlabel("Iteration")
-plt.ylabel("segregated")
-plt.legend()
-plt.show()
-plt.close()
-#function who call for the update matrix
-def update_frames(frame):
-   animation_image.set_array(matrices[frame])
-   ax.set_title(str(frame))
-   return animation_image,
+    plt.title("Similarity threshold wanted: {}".format(SIM_T),color=color_title)
+    plt.plot(range(iteration),segregated_b,label="segregated_b",color="blue")
+    plt.plot(range(iteration),segregated_r,label="segregated_r",color="red")
+    plt.xlabel("Iteration")
+    plt.ylabel("segregated")
+    plt.legend()
+    plt.show()
+    plt.close()
+    #function who call for the update matrix
+    def update_frames(frame):
+       animation_image.set_array(matrices[frame])
+       ax.set_title(str(frame))
+       return animation_image,
 
-fig, ax = plt.subplots(figsize=(8,8))
-animation_image = ax.matshow(matrices[0],cmap=cmap_1)
-#makes bar on animation
-fig.colorbar(animation_image,orientation='horizontal')
-ani1 = FuncAnimation(fig, update_frames, frames=len(matrices), blit=True)
+    fig, ax = plt.subplots(figsize=(8,8))
+    animation_image = ax.matshow(matrices[0],cmap=cmap_1)
+    #makes bar on animation
+    fig.colorbar(animation_image,orientation='horizontal')
+    ani1 = FuncAnimation(fig, update_frames, frames=len(matrices), blit=True)
 
-#saves animation
-from IPython.display import HTML
-#HTML(ani1.to_jshtml())
+    #saves animation
+    from IPython.display import HTML
+    #HTML(ani1.to_jshtml())

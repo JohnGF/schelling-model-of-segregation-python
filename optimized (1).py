@@ -237,56 +237,57 @@ def k_evolve(M, boundary='wrap'):
     #return happiness 2
     return r_w_s
 
-#board=rand_init(N, B_to_R, EMPTY)
-board=n_agents(N,N_agents,EMPTY)
+if __name__ == '__main__':
+    #board=rand_init(N, B_to_R, EMPTY)
+    board=n_agents(N,N_agents,EMPTY)
 
-plt.matshow(board,cmap=cmap_set)
-plt.title("Begining")
-plt.show()
-plt.close()
-#list matrix to use in animation
-matrices=[]
-unhappines=[]
-dissatified=[]
-segregated=[]
-for i in range(cycles):
-    agents_n_l,neight,filling,agents_d_l,array_map_holder,dissatified_agent,segregated_agent=evolve_m_agent(board)
-    matrices.append(board.copy())
-    unhappines.append(agents_d_l)
-    dissatified.append(dissatified_agent),segregated.append(segregated_agent)
-plt.matshow(board,cmap=cmap_set)
-plt.title("Finish")
-plt.show()
-plt.close()
+    plt.matshow(board,cmap=cmap_set)
+    plt.title("Begining")
+    plt.show()
+    plt.close()
+    #list matrix to use in animation
+    matrices=[]
+    unhappines=[]
+    dissatified=[]
+    segregated=[]
+    for i in range(cycles):
+        agents_n_l,neight,filling,agents_d_l,array_map_holder,dissatified_agent,segregated_agent=evolve_m_agent(board)
+        matrices.append(board.copy())
+        unhappines.append(agents_d_l)
+        dissatified.append(dissatified_agent),segregated.append(segregated_agent)
+    plt.matshow(board,cmap=cmap_set)
+    plt.title("Finish")
+    plt.show()
+    plt.close()
 
-#function who call for the update matrix
-def update_frames(frame):
-   animation_image.set_array(matrices[frame])
-   ax.set_title(str(frame))
-   return animation_image,
+    #function who call for the update matrix
+    def update_frames(frame):
+       animation_image.set_array(matrices[frame])
+       ax.set_title(str(frame))
+       return animation_image,
 
-fig, ax = plt.subplots(figsize=(8,8))
-animation_image = ax.matshow(matrices[0],cmap=cmap_set)
-#makes bar on animation
-fig.colorbar(animation_image,orientation='horizontal')
-ani1 = FuncAnimation(fig, update_frames, frames=len(matrices), blit=True)
-plt.show()
-plt.close(fig)
-from IPython.display import HTML
-#HTML(ani1.to_jshtml())
-transpose_list=list(zip(*unhappines))
-for j in range(N_agents):
-    plt.plot(range(cycles),[transpose_list[j][i].sum() for i in range(cycles)],label="Unhappiness %i"%j ,color=color_l[j] )
-plt.title("Unhappiness")
-plt.legend()
-plt.show()
-plt.close()
-#Made redunctant plt.plot( [i[j].sum() for i in dissatified])
+    fig, ax = plt.subplots(figsize=(8,8))
+    animation_image = ax.matshow(matrices[0],cmap=cmap_set)
+    #makes bar on animation
+    fig.colorbar(animation_image,orientation='horizontal')
+    ani1 = FuncAnimation(fig, update_frames, frames=len(matrices), blit=True)
+    plt.show()
+    plt.close(fig)
+    from IPython.display import HTML
+    #HTML(ani1.to_jshtml())
+    transpose_list=list(zip(*unhappines))
+    for j in range(N_agents):
+        plt.plot(range(cycles),[transpose_list[j][i].sum() for i in range(cycles)],label="Unhappiness %i"%j ,color=color_l[j] )
+    plt.title("Unhappiness")
+    plt.legend()
+    plt.show()
+    plt.close()
+    #Made redunctant plt.plot( [i[j].sum() for i in dissatified])
 
-transpose_list=list(zip(*segregated))
-for j in range(N_agents):
-        plt.plot(range(cycles),transpose_list[j],label="segregated %i"%j, color=color_l[j] )
-plt.title("Segregation")
-plt.legend()
-plt.show()
-plt.close()
+    transpose_list=list(zip(*segregated))
+    for j in range(N_agents):
+            plt.plot(range(cycles),transpose_list[j],label="segregated %i"%j, color=color_l[j] )
+    plt.title("Segregation")
+    plt.legend()
+    plt.show()
+    plt.close()
